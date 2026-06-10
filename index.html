@@ -47,6 +47,7 @@
   .r{text-align:right;}
   .badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;}
   .b-hold{background:#dafbe1;color:#116329;}
+  .b-trim{background:#fff8c5;color:#9a6700;}
   .b-watch{background:#fff8c5;color:#9a6700;}
   .b-act{background:#ffebe9;color:#cf222e;}
   .b-new{background:#ddf4ff;color:#0550ae;}
@@ -236,22 +237,22 @@
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
 
 const POSITIONS = [
-  {sym:'ADBE', name:'Adobe Inc',           sh:19.000,  cost:4920.91,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Software. Hold to Apr 2028 liquidation.'},
-  {sym:'C',    name:'Citigroup Inc',        sh:76.441,  cost:6269.90,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Financials. +62% gain. DRIP running. Hold.'},
-  {sym:'CAVA', name:'Cava Group Inc',       sh:77.000,  cost:6074.67,  stopRef:null,   exitRef:90,   addRef:null,  thesis:'watch',note:'Exit trigger $90. Thesis weakened on industry outlook.'},
-  {sym:'COR',  name:'Cencora Inc',          sh:12.000,  cost:3184.75,  stopRef:265.40, exitRef:null, addRef:null,  thesis:'new',  note:'Initiated 6/2/26. Q3 Aug confirms GLP-1 thesis. Give it time.'},
-  {sym:'IBIT', name:'Bitcoin ETF',          sh:92.000,  cost:5014.00,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Patient hold. Cycle recovery aligns with Apr 2028 window.'},
-  {sym:'ISRG', name:'Intuitive Surgical',   sh:13.000,  cost:5325.29,  stopRef:409.64, exitRef:null, addRef:null,  thesis:'new',  note:'Initiated 5/11–6/2. Q2 Jul 21 is first thesis check.'},
-  {sym:'LRCX', name:'Lam Research Corp',    sh:32.272,  cost:2326.71,  stopRef:297.17, exitRef:null, addRef:null,  thesis:'hold', note:'Trim plan active. Stop 10% below $297.17 ref.'},
-  {sym:'MAGS', name:'Roundhill Mag 7 ETF',  sh:64.939,  cost:3034.45,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Diversified mega-cap ETF. DRIP running. Hold.'},
-  {sym:'META', name:'Meta Platforms',       sh:10.000,  cost:6169.50,  stopRef:616.95, exitRef:null, addRef:525,   thesis:'new',  note:'Add trigger $525. Q2 capex guidance key Jul 29.'},
-  {sym:'MSFT', name:'Microsoft Corp',       sh:13.000,  cost:4811.50,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Mega-cap core. Hold.'},
-  {sym:'NFLX', name:'Netflix Inc',          sh:44.000,  cost:3823.60,  stopRef:86.90,  exitRef:null, addRef:78,    thesis:'new',  note:'Recent buy. Add trigger $78. Buyback + ads ramp thesis.'},
-  {sym:'NVDA', name:'Nvidia Corp',          sh:28.009,  cost:4036.76,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Core AI thesis. DRIP running. Hold.'},
-  {sym:'ORCL', name:'Oracle Corp',          sh:36.100,  cost:5290.20,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'OCI cloud momentum. Q4 FY26 reported 6/10. Hold.'},
-  {sym:'VRT',  name:'Vertiv Holdings',      sh:26.041,  cost:2279.22,  stopRef:279.65, exitRef:null, addRef:null,  thesis:'watch',note:'Trim plan active. Stop 10% below $279.65. Proprietary cooling risk.'},
-  {sym:'VST',  name:'Vistra Corp',          sh:36.000,  cost:4987.80,  stopRef:138.55, exitRef:null, addRef:125,   thesis:'new',  note:'Initiated 6/10/26. AI power thesis. 56% analyst upside.'},
-  {sym:'ZETA', name:'Zeta Global',          sh:332.000, cost:6169.08,  stopRef:null,   exitRef:30,   addRef:null,  thesis:'hold', note:'Trim trigger $30 (25-30% of position). High-beta AdTech.'},
+  {sym:'ADBE', name:'Adobe Inc',          sh:19.000,  cost:4920.91,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Software. Hold to Apr 2028 liquidation.'},
+  {sym:'C',    name:'Citigroup Inc',      sh:76.441,  cost:6269.90,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Financials. +62% gain. DRIP running. Hold.'},
+  {sym:'CAVA', name:'Cava Group Inc',     sh:77.000,  cost:6074.67,  stopRef:null,   ath:null,   trimRef:null,   exitRef:90,    addRef:null,  thesis:'watch',gradDate:null,       note:'Exit at $90. Thesis weakened on industry outlook. Proceeds → HELOC.'},
+  {sym:'COR',  name:'Cencora Inc',        sh:12.000,  cost:3184.75,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Aug 2026', note:'Q3 earnings Aug 2026 is graduation check — confirm GLP-1 stabilization.'},
+  {sym:'IBIT', name:'Bitcoin ETF',        sh:92.000,  cost:5014.00,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Patient hold. Bitcoin cycle recovery aligns with Apr 2028 window.'},
+  {sym:'ISRG', name:'Intuitive Surgical', sh:13.000,  cost:5325.29,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Jul 2026', note:'Q2 earnings Jul 21 is graduation check — confirm da Vinci 5 cycle + bariatric stabilization.'},
+  {sym:'LRCX', name:'Lam Research Corp',  sh:32.272,  cost:2326.71,  stopRef:null,   ath:344,    trimRef:null,   exitRef:null,  addRef:null,  thesis:'trim', gradDate:null,       note:'Stop 10% below ATH ($344). Trigger = $310. New ATH → update stop. Trim → HELOC.'},
+  {sym:'MAGS', name:'Roundhill Mag 7 ETF',sh:64.939,  cost:3034.45,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Diversified mega-cap ETF. DRIP running. Hold.'},
+  {sym:'META', name:'Meta Platforms',     sh:10.000,  cost:6169.50,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:525,   thesis:'new',  gradDate:'Jul 2026', note:'Q2 capex guidance Jul 29 is graduation check. Add trigger $525 — last $4K HELOC dry powder.'},
+  {sym:'MSFT', name:'Microsoft Corp',     sh:13.000,  cost:4811.50,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Mega-cap core. Hold.'},
+  {sym:'NFLX', name:'Netflix Inc',        sh:44.000,  cost:3823.60,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Jul 2026', note:'Q2 earnings Jul 16 is graduation check — confirm buyback + ads ramp thesis.'},
+  {sym:'NVDA', name:'Nvidia Corp',        sh:28.009,  cost:4036.76,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Core AI thesis. DRIP running. Hold.'},
+  {sym:'ORCL', name:'Oracle Corp',        sh:36.100,  cost:5290.20,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'OCI cloud momentum. Q4 FY26 reported 6/10. Hold.'},
+  {sym:'VRT',  name:'Vertiv Holdings',    sh:26.041,  cost:2279.22,  stopRef:null,   ath:null,   trimRef:279.65, exitRef:null,  addRef:null,  thesis:'trim', gradDate:null,       note:'Stop 10% below last trim price ($279.65). Trigger = $252. Proprietary cooling risk. Trim → HELOC.'},
+  {sym:'VST',  name:'Vistra Corp',        sh:36.000,  cost:4987.80,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Aug 2026', note:'Q2 earnings Jul/Aug is graduation check — confirm AI power demand thesis.'},
+  {sym:'ZETA', name:'Zeta Global',        sh:332.000, cost:6169.08,  stopRef:null,   ath:null,   trimRef:null,   exitRef:30,    addRef:null,  thesis:'hold', gradDate:null,       note:'Trim 25-30% at $30 (high beta AdTech momentum pattern). Proceeds → HELOC.'};
 ];
 
 const TRIGGER = 117600;
@@ -265,14 +266,44 @@ function monthsTo(y, m) {
 }
 
 function getSignal(p, price) {
-  if (p.thesis === 'new') return {cls:'b-new', label:'new', priority:1};
-  if (p.exitRef && price >= p.exitRef)                   return {cls:'b-act', label:'act — exit',      priority:4};
-  if (p.stopRef && price <= p.stopRef * 0.90)            return {cls:'b-act', label:'act — stop hit',  priority:4};
-  if (p.addRef  && price <= p.addRef * 1.02)             return {cls:'b-act', label:'act — add',       priority:4};
-  if (p.exitRef && price >= p.exitRef * 0.92)            return {cls:'b-watch', label:'watch',          priority:3};
-  if (p.stopRef && price <= p.stopRef * 0.98)            return {cls:'b-watch', label:'watch',          priority:3};
-  if (p.addRef  && price <= p.addRef * 1.08)             return {cls:'b-watch', label:'watch',          priority:3};
-  if (p.thesis === 'watch')                              return {cls:'b-watch', label:'watch',          priority:2};
+  const now = new Date();
+
+  if (p.thesis === 'new') {
+    if (p.gradDate) return {cls:'b-new', label:'new → ' + p.gradDate, priority:1};
+    return {cls:'b-new', label:'new', priority:1};
+  }
+
+  // Exit trigger (CAVA at $90, ZETA at $30)
+  if (p.exitRef && price >= p.exitRef)
+    return {cls:'b-act', label:'act — exit/trim', priority:4};
+  if (p.exitRef && price >= p.exitRef * 0.94)
+    return {cls:'b-watch', label:'watch — near exit', priority:3};
+
+  // ATH-based stop (LRCX: 10% below ATH)
+  if (p.ath) {
+    const stopLevel = p.ath * 0.90;
+    if (price <= stopLevel)
+      return {cls:'b-act', label:'act — stop hit ($' + Math.round(stopLevel) + ')', priority:4};
+    if (price <= stopLevel * 1.05)
+      return {cls:'b-watch', label:'watch — near stop', priority:3};
+  }
+
+  // TrimRef-based stop (VRT: 10% below last trim price)
+  if (p.trimRef) {
+    const stopLevel = p.trimRef * 0.90;
+    if (price <= stopLevel)
+      return {cls:'b-act', label:'act — stop hit ($' + Math.round(stopLevel) + ')', priority:4};
+    if (price <= stopLevel * 1.05)
+      return {cls:'b-watch', label:'watch — near stop', priority:3};
+  }
+
+  // Add trigger (META at $525)
+  if (p.addRef && price <= p.addRef * 1.02)
+    return {cls:'b-act', label:'act — add now', priority:4};
+  if (p.addRef && price <= p.addRef * 1.08)
+    return {cls:'b-watch', label:'watch — near add', priority:3};
+
+  if (p.thesis === 'trim') return {cls:'b-trim', label:'trim active', priority:1};
   return {cls:'b-hold', label:'hold', priority:1};
 }
 
@@ -318,14 +349,26 @@ function render(prices) {
 
     if (price > 0 && sig.priority >= 3) {
       let msg = '';
+      const athStop  = p.ath     ? Math.round(p.ath     * 0.90) : null;
+      const trimStop = p.trimRef ? Math.round(p.trimRef * 0.90) : null;
+
       if (sig.priority === 4 && p.exitRef && price >= p.exitRef)
-        msg = `${p.sym} at ${fmt(price)} has hit exit trigger ${fmt(p.exitRef)}. ${p.note}`;
-      else if (sig.priority === 4 && p.stopRef && price <= p.stopRef * 0.90)
-        msg = `${p.sym} stop triggered — down 10%+ from ref ${fmt(p.stopRef)}. Current ${fmt(price)}. Trim → HELOC.`;
+        msg = `${p.sym} at ${fmt(price)} has hit the exit/trim trigger of ${fmt(p.exitRef)}. ${p.note}`;
+      else if (sig.priority === 4 && p.ath && price <= p.ath * 0.90)
+        msg = `${p.sym} stop triggered — down 10%+ from ATH ${fmt(p.ath)}. Current ${fmt(price)} ≤ ${fmt(athStop)}. Trim position → proceeds to HELOC.`;
+      else if (sig.priority === 4 && p.trimRef && price <= p.trimRef * 0.90)
+        msg = `${p.sym} stop triggered — down 10%+ from last trim ${fmt(p.trimRef)}. Current ${fmt(price)} ≤ ${fmt(trimStop)}. Trim position → proceeds to HELOC.`;
       else if (sig.priority === 4 && p.addRef && price <= p.addRef * 1.02)
-        msg = `${p.sym} at ${fmt(price)} — at or below add trigger ${fmt(p.addRef)}. Deploy from HELOC dry powder.`;
+        msg = `${p.sym} at ${fmt(price)} is at or below add trigger ${fmt(p.addRef)}. Deploy remaining $4K HELOC dry powder.`;
+      else if (sig.priority === 3 && p.exitRef)
+        msg = `${p.sym} at ${fmt(price)} is within 6% of exit trigger ${fmt(p.exitRef)}. Start watching closely.`;
+      else if (sig.priority === 3 && (p.ath || p.trimRef)) {
+        const ref = p.ath ? fmt(athStop) : fmt(trimStop);
+        msg = `${p.sym} at ${fmt(price)} is approaching stop level ${ref}. Monitor — trim if stop is hit.`;
+      } else if (sig.priority === 3 && p.addRef)
+        msg = `${p.sym} at ${fmt(price)} is approaching add trigger ${fmt(p.addRef)}. Prepare to deploy HELOC.`;
       else
-        msg = `${p.sym} at ${fmt(price)} approaching trigger zone. ${p.note}`;
+        msg = `${p.sym} at ${fmt(price)} — watch zone. ${p.note}`;
       actions.push({sym: p.sym, msg, priority: sig.priority});
     }
   });
