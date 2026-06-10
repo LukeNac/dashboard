@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanguard 76999101 — Strategy Dashboard</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;color:#111;font-size:14px;line-height:1.5;}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 16px;}
+  h1{font-size:20px;font-weight:600;margin-bottom:2px;}
+  .sub{font-size:13px;color:#666;margin-bottom:20px;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
+  .kpi{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:14px 16px;}
+  .kpi-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+  .kpi-val{font-size:22px;font-weight:600;}
+  .kpi-sub{font-size:11px;color:#888;margin-top:3px;}
+  .card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:18px;margin-bottom:14px;}
+  .card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:12px;}
+  .bar-track{background:#eee;border-radius:4px;height:10px;overflow:hidden;margin:6px 0 4px;}
+  .bar-fill{height:100%;border-radius:4px;transition:width .5s ease;background:#1a56db;}
+  .bar-labels{display:flex;justify-content:space-between;font-size:11px;color:#888;}
+  .plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid #f0f0f0;}
+  .plan-item-label{font-size:11px;color:#888;margin-bottom:3px;}
+  .plan-item-val{font-size:15px;font-weight:600;}
+  .attn-card{border-color:#e0e0e0;}
+  .attn-card.ok{border-color:#2da44e;}
+  .attn-card.warn{border-color:#e6a817;}
+  .attn-card.danger{border-color:#cf222e;}
+  .attn-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px;}
+  .attn-row:last-child{border-bottom:none;}
+  .attn-sym{font-weight:600;min-width:48px;}
+  .attn-msg{flex:1;color:#333;line-height:1.5;}
+  .attn-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+  .tag-act{background:#ffebe9;color:#cf222e;}
+  .tag-watch{background:#fff8c5;color:#9a6700;}
+  .tag-dry{background:#f0effe;color:#5a3bc9;}
+  .tag-ok{background:#dafbe1;color:#116329;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .pos-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .pos-table th{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:4px 0 8px;border-bottom:1px solid #e0e0e0;}
+  .pos-table th.r{text-align:right;}
+  .pos-table td{padding:6px 0;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+  .pos-table tr:last-child td{border-bottom:none;}
+  .pos-sym{font-weight:600;}
+  .pos-name{font-size:12px;color:#888;}
+  .r{text-align:right;}
+  .badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;}
+  .b-hold{background:#dafbe1;color:#116329;}
+  .b-watch{background:#fff8c5;color:#9a6700;}
+  .b-act{background:#ffebe9;color:#cf222e;}
+  .b-new{background:#ddf4ff;color:#0550ae;}
+  .watch-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px;}
+  .watch-row:last-child{border-bottom:none;}
+  .watch-sym{font-weight:600;min-width:52px;}
+  .watch-desc{flex:1;color:#555;}
+  .watch-alloc{font-size:12px;color:#888;}
+  .stop-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #f5f5f5;}
+  .stop-row:last-child{border-bottom:none;}
+  .cat-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #f5f5f5;}
+  .cat-row:last-child{border-bottom:none;}
+  .green{color:#2da44e;font-weight:600;}
+  .red{color:#cf222e;font-weight:600;}
+  .refresh-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .refresh-btn{font-size:12px;padding:6px 14px;border:1px solid #d0d7de;border-radius:6px;background:#fff;cursor:pointer;color:#333;}
+  .refresh-btn:hover{background:#f6f8fa;}
+  .status{font-size:12px;color:#888;}
+  .status.loading{color:#1a56db;}
+  .status.error{color:#cf222e;}
+  .status.ok{color:#2da44e;}
+  .footer{font-size:11px;color:#aaa;margin-top:20px;line-height:1.6;}
+  @media(max-width:600px){.two-col{grid-template-columns:1fr;}.plan-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="refresh-bar">
+  <div>
+    <h1>Vanguard 76999101 — Strategy Dashboard</h1>
+    <p class="sub">April 2028 liquidation plan · Luke &amp; Molly Naccarato</p>
+  </div>
+  <div style="text-align:right;">
+    <button class="refresh-btn" onclick="loadPrices()">&#8635; Refresh prices</button>
+    <p class="status" id="status">Loading prices...</p>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">portfolio value</div>
+    <div class="kpi-val" id="kpi-mv">—</div>
+    <div class="kpi-sub">loading prices...</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">to trigger</div>
+    <div class="kpi-val" id="kpi-gap">—</div>
+    <div class="kpi-sub" id="kpi-gap-sub">trigger: $117,600</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">unrealized gain</div>
+    <div class="kpi-val" id="kpi-gain">—</div>
+    <div class="kpi-sub" id="kpi-gain-pct">on $72,755 basis</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">2026 realized LTCG</div>
+    <div class="kpi-val">$4,549</div>
+    <div class="kpi-sub">~$682 est. federal tax</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">progress to liquidation trigger</div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;">
+    <span style="font-size:13px;color:#666;">current portfolio value</span>
+    <span style="font-size:14px;font-weight:600;" id="bar-pct">—</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;">
+    <span style="font-size:22px;font-weight:600;" id="bar-mv">—</span>
+    <span style="font-size:15px;font-weight:600;color:#888;">$117,600 trigger</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill" id="bar-fill" style="width:0%;"></div></div>
+  <div class="bar-labels">
+    <span>$0</span>
+    <span>$117,600</span>
+  </div>
+  <div class="plan-grid">
+    <div>
+      <div class="plan-item-label">contributions</div>
+      <div class="plan-item-val">$76,000 <span style="font-size:12px;font-weight:400;color:#888;">implied</span></div>
+    </div>
+    <div>
+      <div class="plan-item-label">dry powder</div>
+      <div class="plan-item-val">$4,000 <span style="font-size:12px;font-weight:400;color:#888;">remaining</span></div>
+    </div>
+    <div>
+      <div class="plan-item-label">heloc balance</div>
+      <div class="plan-item-val">$40,200</div>
+    </div>
+    <div>
+      <div class="plan-item-label">april 2028</div>
+      <div class="plan-item-val" id="months-left">— months</div>
+    </div>
+  </div>
+</div>
+
+<div class="card attn-card" id="attn-card">
+  <div class="card-title" id="attn-title">signals</div>
+  <div id="attn-body"><p style="color:#888;">Loading...</p></div>
+</div>
+
+<div class="two-col">
+
+<div class="card">
+  <div class="card-title">positions</div>
+  <table class="pos-table">
+    <thead>
+      <tr>
+        <th>ticker</th>
+        <th class="r">price</th>
+        <th class="r">value</th>
+        <th class="r">g/l</th>
+        <th class="r">signal</th>
+      </tr>
+    </thead>
+    <tbody id="pos-body"></tbody>
+  </table>
+</div>
+
+<div>
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">entry watchlist — $4K dry powder</div>
+    <div class="watch-row">
+      <span class="watch-sym">MELI</span>
+      <span class="watch-desc">entry at $1,500</span>
+      <span class="watch-alloc">$5K HELOC</span>
+      <span class="badge" style="background:#f0effe;color:#5a3bc9;">watching</span>
+    </div>
+    <div class="watch-row">
+      <span class="watch-sym">META+</span>
+      <span class="watch-desc">add at $525</span>
+      <span class="watch-alloc">$3K HELOC</span>
+      <span class="badge" style="background:#f0effe;color:#5a3bc9;">watching</span>
+    </div>
+    <div class="watch-row">
+      <span class="watch-sym">VST+</span>
+      <span class="watch-desc">add at $125</span>
+      <span class="watch-alloc">$2K HELOC</span>
+      <span class="badge" style="background:#f0effe;color:#5a3bc9;">watching</span>
+    </div>
+    <div class="watch-row">
+      <span class="watch-sym">CAVA</span>
+      <span class="watch-desc">exit at $90</span>
+      <span class="watch-alloc">sell 77sh</span>
+      <span class="badge" style="background:#ffebe9;color:#cf222e;">exit</span>
+    </div>
+    <div class="watch-row">
+      <span class="watch-sym">ZETA</span>
+      <span class="watch-desc">trim 25-30% at $30</span>
+      <span class="watch-alloc">~85-100sh</span>
+      <span class="badge" style="background:#fff8c5;color:#9a6700;">trim</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">stop-loss levels</div>
+    <div class="stop-row"><span>LRCX</span><span style="font-weight:600;">$267 <span style="font-weight:400;color:#888;">(10% below $297)</span></span></div>
+    <div class="stop-row"><span>VRT</span><span style="font-weight:600;">$252 <span style="font-weight:400;color:#888;">(10% below $280)</span></span></div>
+    <div class="stop-row"><span>VST</span><span style="font-weight:600;">$125 <span style="font-weight:400;color:#888;">(10% below $139)</span></span></div>
+    <div class="stop-row"><span>ISRG</span><span style="font-weight:600;">$369 <span style="font-weight:400;color:#888;">(10% below $409)</span></span></div>
+    <div class="stop-row"><span>META</span><span style="font-weight:600;">$525 <span style="font-weight:400;color:#888;">(add trigger)</span></span></div>
+    <div class="stop-row"><span>NFLX</span><span style="font-weight:600;">$78 <span style="font-weight:400;color:#888;">(add trigger)</span></span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">upcoming catalysts</div>
+    <div class="cat-row"><span style="font-weight:600;">ISRG Q2</span><span style="color:#888;">Jul 21, 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">META + VRT Q2</span><span style="color:#888;">Jul 29, 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">MELI Q2</span><span style="color:#888;">Aug 3, 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">COR Q3</span><span style="color:#888;">Aug ~15, 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">NVDA Q2</span><span style="color:#888;">Aug ~20, 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">Tax withholding review</span><span style="color:#888;">Sep 2026</span></div>
+    <div class="cat-row"><span style="font-weight:600;">Vanguard liquidation</span><span style="color:#888;">Apr 2028</span></div>
+  </div>
+</div>
+
+</div>
+
+<p class="footer">
+  Trigger: $117,600 (current) → $121,600 after final $4K deployed.<br>
+  Base = $72,600 ($76K implied contributions less $3,401 trim paydown) + $45K gain target.<br>
+  Prices auto-loaded from Google Sheets on open. Click "Refresh prices" to update. Signal logic: ACT = stop hit or exit level reached · WATCH = within 8% of stop/trigger · NEW = position &lt;90 days · HOLD = let it run.
+</p>
+
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
+
+const POSITIONS = [
+  {sym:'ADBE', name:'Adobe Inc',           sh:19.000,  cost:4920.91,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Software. Hold to Apr 2028 liquidation.'},
+  {sym:'C',    name:'Citigroup Inc',        sh:76.441,  cost:6269.90,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Financials. +62% gain. DRIP running. Hold.'},
+  {sym:'CAVA', name:'Cava Group Inc',       sh:77.000,  cost:6074.67,  stopRef:null,   exitRef:90,   addRef:null,  thesis:'watch',note:'Exit trigger $90. Thesis weakened on industry outlook.'},
+  {sym:'COR',  name:'Cencora Inc',          sh:12.000,  cost:3184.75,  stopRef:265.40, exitRef:null, addRef:null,  thesis:'new',  note:'Initiated 6/2/26. Q3 Aug confirms GLP-1 thesis. Give it time.'},
+  {sym:'IBIT', name:'Bitcoin ETF',          sh:92.000,  cost:5014.00,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Patient hold. Cycle recovery aligns with Apr 2028 window.'},
+  {sym:'ISRG', name:'Intuitive Surgical',   sh:13.000,  cost:5325.29,  stopRef:409.64, exitRef:null, addRef:null,  thesis:'new',  note:'Initiated 5/11–6/2. Q2 Jul 21 is first thesis check.'},
+  {sym:'LRCX', name:'Lam Research Corp',    sh:32.272,  cost:2326.71,  stopRef:297.17, exitRef:null, addRef:null,  thesis:'hold', note:'Trim plan active. Stop 10% below $297.17 ref.'},
+  {sym:'MAGS', name:'Roundhill Mag 7 ETF',  sh:64.939,  cost:3034.45,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Diversified mega-cap ETF. DRIP running. Hold.'},
+  {sym:'META', name:'Meta Platforms',       sh:10.000,  cost:6169.50,  stopRef:616.95, exitRef:null, addRef:525,   thesis:'new',  note:'Add trigger $525. Q2 capex guidance key Jul 29.'},
+  {sym:'MSFT', name:'Microsoft Corp',       sh:13.000,  cost:4811.50,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Mega-cap core. Hold.'},
+  {sym:'NFLX', name:'Netflix Inc',          sh:44.000,  cost:3823.60,  stopRef:86.90,  exitRef:null, addRef:78,    thesis:'new',  note:'Recent buy. Add trigger $78. Buyback + ads ramp thesis.'},
+  {sym:'NVDA', name:'Nvidia Corp',          sh:28.009,  cost:4036.76,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'Core AI thesis. DRIP running. Hold.'},
+  {sym:'ORCL', name:'Oracle Corp',          sh:36.100,  cost:5290.20,  stopRef:null,   exitRef:null, addRef:null,  thesis:'hold', note:'OCI cloud momentum. Q4 FY26 reported 6/10. Hold.'},
+  {sym:'VRT',  name:'Vertiv Holdings',      sh:26.041,  cost:2279.22,  stopRef:279.65, exitRef:null, addRef:null,  thesis:'watch',note:'Trim plan active. Stop 10% below $279.65. Proprietary cooling risk.'},
+  {sym:'VST',  name:'Vistra Corp',          sh:36.000,  cost:4987.80,  stopRef:138.55, exitRef:null, addRef:125,   thesis:'new',  note:'Initiated 6/10/26. AI power thesis. 56% analyst upside.'},
+  {sym:'ZETA', name:'Zeta Global',          sh:332.000, cost:6169.08,  stopRef:null,   exitRef:30,   addRef:null,  thesis:'hold', note:'Trim trigger $30 (25-30% of position). High-beta AdTech.'},
+];
+
+const TRIGGER = 117600;
+const fmt  = v => '$' + Math.round(v).toLocaleString();
+const fmtS = v => (v >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(v)).toLocaleString();
+
+function monthsTo(y, m) {
+  const now = new Date();
+  const target = new Date(y, m - 1, 1);
+  return Math.max(0, Math.round((target - now) / (1000 * 60 * 60 * 24 * 30.4)));
+}
+
+function getSignal(p, price) {
+  if (p.thesis === 'new') return {cls:'b-new', label:'new', priority:1};
+  if (p.exitRef && price >= p.exitRef)                   return {cls:'b-act', label:'act — exit',      priority:4};
+  if (p.stopRef && price <= p.stopRef * 0.90)            return {cls:'b-act', label:'act — stop hit',  priority:4};
+  if (p.addRef  && price <= p.addRef * 1.02)             return {cls:'b-act', label:'act — add',       priority:4};
+  if (p.exitRef && price >= p.exitRef * 0.92)            return {cls:'b-watch', label:'watch',          priority:3};
+  if (p.stopRef && price <= p.stopRef * 0.98)            return {cls:'b-watch', label:'watch',          priority:3};
+  if (p.addRef  && price <= p.addRef * 1.08)             return {cls:'b-watch', label:'watch',          priority:3};
+  if (p.thesis === 'watch')                              return {cls:'b-watch', label:'watch',          priority:2};
+  return {cls:'b-hold', label:'hold', priority:1};
+}
+
+function parseCSV(text) {
+  const prices = {};
+  const lines = text.trim().split('\n');
+  lines.slice(1).forEach(line => {
+    const parts = line.split(',');
+    if (parts.length >= 2) {
+      const sym = parts[0].trim().replace(/"/g,'');
+      const val = parseFloat(parts[1].trim().replace(/"/g,''));
+      if (sym && !isNaN(val)) prices[sym] = val;
+    }
+  });
+  return prices;
+}
+
+function render(prices) {
+  let totalMV = 0;
+  const totalCost = 72755;
+  const actions = [];
+  const tbody = document.getElementById('pos-body');
+  tbody.innerHTML = '';
+
+  POSITIONS.forEach(p => {
+    const price = prices[p.sym] || 0;
+    const mv = Math.round(price * p.sh);
+    const gl = mv - Math.round(p.cost);
+    totalMV += mv;
+
+    const sig = price > 0 ? getSignal(p, price) : {cls:'b-hold', label:'hold', priority:1};
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div class="pos-sym">${p.sym}</div><div class="pos-name">${p.name}</div></td>
+      <td class="r">${price > 0 ? fmt(price) : '—'}</td>
+      <td class="r">${price > 0 ? fmt(mv) : '—'}</td>
+      <td class="r ${gl >= 0 ? 'green' : 'red'}">${price > 0 ? fmtS(gl) : '—'}</td>
+      <td class="r"><span class="badge ${sig.cls}">${sig.label}</span></td>
+    `;
+    tbody.appendChild(tr);
+
+    if (price > 0 && sig.priority >= 3) {
+      let msg = '';
+      if (sig.priority === 4 && p.exitRef && price >= p.exitRef)
+        msg = `${p.sym} at ${fmt(price)} has hit exit trigger ${fmt(p.exitRef)}. ${p.note}`;
+      else if (sig.priority === 4 && p.stopRef && price <= p.stopRef * 0.90)
+        msg = `${p.sym} stop triggered — down 10%+ from ref ${fmt(p.stopRef)}. Current ${fmt(price)}. Trim → HELOC.`;
+      else if (sig.priority === 4 && p.addRef && price <= p.addRef * 1.02)
+        msg = `${p.sym} at ${fmt(price)} — at or below add trigger ${fmt(p.addRef)}. Deploy from HELOC dry powder.`;
+      else
+        msg = `${p.sym} at ${fmt(price)} approaching trigger zone. ${p.note}`;
+      actions.push({sym: p.sym, msg, priority: sig.priority});
+    }
+  });
+
+  const gain = totalMV - totalCost;
+  const pct  = (gain / totalCost * 100).toFixed(1);
+  const progress = Math.min(totalMV / TRIGGER, 1);
+  const gap = Math.max(TRIGGER - totalMV, 0);
+
+  document.getElementById('kpi-mv').textContent    = fmt(totalMV);
+  document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
+  document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $117,600 trigger' : 'liquidation trigger reached';
+  document.getElementById('kpi-gain').textContent  = fmtS(gain);
+  document.getElementById('kpi-gain-pct').textContent = pct + '% on $72,755 basis';
+  document.getElementById('bar-fill').style.width  = (progress * 100).toFixed(1) + '%';
+  document.getElementById('bar-fill').style.background = progress >= 1 ? '#2da44e' : '#1a56db';
+  document.getElementById('bar-pct').textContent   = (progress * 100).toFixed(1) + '% of trigger';
+  document.getElementById('bar-mv').textContent    = fmt(totalMV);
+  document.getElementById('months-left').textContent = monthsTo(2028, 4) + ' months';
+
+  const attnCard  = document.getElementById('attn-card');
+  const attnTitle = document.getElementById('attn-title');
+  const attnBody  = document.getElementById('attn-body');
+
+  const acts  = actions.filter(a => a.priority === 4);
+  const watch = actions.filter(a => a.priority === 3);
+
+  attnCard.className = 'card attn-card ' + (acts.length ? 'danger' : watch.length ? 'warn' : 'ok');
+  attnTitle.textContent = acts.length ? `signals — ${acts.length} action needed` :
+                          watch.length ? `signals — ${watch.length} watching` :
+                          'signals — nothing to do today';
+
+  if (actions.length === 0) {
+    attnBody.innerHTML = '<p style="color:#2da44e;font-weight:500;">Portfolio is on plan. No positions require action. Let it compound.</p>';
+  } else {
+    attnBody.innerHTML = actions.map(a => {
+      const tagCls = a.priority === 4 ? 'tag-act' : a.priority === 3 ? 'tag-watch' : 'tag-dry';
+      const tagLabel = a.priority === 4 ? 'act now' : 'watching';
+      return `<div class="attn-row">
+        <span class="attn-sym">${a.sym}</span>
+        <span class="attn-msg">${a.msg}</span>
+        <span class="attn-tag ${tagCls}">${tagLabel}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + (cls || '');
+}
+
+function loadPrices() {
+  setStatus('Refreshing...', 'loading');
+  fetch(CSV_URL + '&t=' + Date.now())
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(text => {
+      const prices = parseCSV(text);
+      const count = Object.keys(prices).length;
+      if (count === 0) throw new Error('No prices found');
+      render(prices);
+      const now = new Date();
+      setStatus('Updated ' + now.toLocaleTimeString(), 'ok');
+    })
+    .catch(err => {
+      setStatus('Error: ' + err.message, 'error');
+      console.error(err);
+    });
+}
+
+loadPrices();
+</script>
+</body>
+</html>
