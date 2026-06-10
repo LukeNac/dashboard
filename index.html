@@ -299,9 +299,10 @@ function render(prices) {
   const tbody = document.getElementById('pos-body');
   tbody.innerHTML = '';
 
-  POSITIONS.forEach(p => {
-    const price = prices[p.sym] || 0;
-    const mv = Math.round(price * p.sh);
+  const sorted = POSITIONS.map(p => ({...p, price: prices[p.sym]||0, mv: Math.round((prices[p.sym]||0)*p.sh)})).sort((a,b)=>b.mv-a.mv);
+  sorted.forEach(p => {
+    const price = p.price;
+    const mv = p.mv;
     const gl = mv - Math.round(p.cost);
     totalMV += mv;
 
