@@ -234,7 +234,8 @@
 </div>
 
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
+const CSV_URL = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_URL);
 
 const POSITIONS = [
   {sym:'ADBE', name:'Adobe Inc',          sh:19.000,  cost:4920.91,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Software. Hold to Apr 2028 liquidation.'},
