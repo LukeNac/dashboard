@@ -234,8 +234,7 @@
 </div>
 
 <script>
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
-const CSV_URL = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_URL);
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRjg4eSi9Uw116tMKdd5SJw0X2fXv-0Mk8Oy8tfKF0EBs_ehL_woB0Pw8-LM_vdRJVxEToPNsW-LgC3/pub?gid=581873323&single=true&output=csv';
 
 const POSITIONS = [
   {sym:'ADBE', name:'Adobe Inc',          sh:19.000,  cost:4920.91,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Software. Hold to Apr 2028 liquidation.'},
@@ -253,7 +252,7 @@ const POSITIONS = [
   {sym:'ORCL', name:'Oracle Corp',        sh:36.100,  cost:5290.20,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'OCI cloud momentum. Q4 FY26 reported 6/10. Hold.'},
   {sym:'VRT',  name:'Vertiv Holdings',    sh:26.041,  cost:2279.22,  stopRef:null,   ath:null,   trimRef:279.65, exitRef:null,  addRef:null,  thesis:'trim', gradDate:null,       note:'Stop 10% below last trim price ($279.65). Trigger = $252. Proprietary cooling risk. Trim → HELOC.'},
   {sym:'VST',  name:'Vistra Corp',        sh:36.000,  cost:4987.80,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Aug 2026', note:'Q2 earnings Jul/Aug is graduation check — confirm AI power demand thesis.'},
-  {sym:'ZETA', name:'Zeta Global',        sh:332.000, cost:6169.08,  stopRef:null,   ath:null,   trimRef:null,   exitRef:30,    addRef:null,  thesis:'hold', gradDate:null,       note:'Trim 25-30% at $30 (high beta AdTech momentum pattern). Proceeds → HELOC.'};
+  {sym:'ZETA', name:'Zeta Global',        sh:332.000, cost:6169.08,  stopRef:null,   ath:null,   trimRef:null,   exitRef:30,    addRef:null,  thesis:'hold', gradDate:null,       note:'Trim 25-30% at $30 (high beta AdTech momentum pattern). Proceeds → HELOC.'},
 ];
 
 const TRIGGER = 117600;
