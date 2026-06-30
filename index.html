@@ -96,7 +96,7 @@
   <div class="kpi">
     <div class="kpi-label">to trigger</div>
     <div class="kpi-val" id="kpi-gap">—</div>
-    <div class="kpi-sub" id="kpi-gap-sub">trigger: $115,300</div>
+    <div class="kpi-sub" id="kpi-gap-sub">trigger: $113,600</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">unrealized gain</div>
@@ -105,8 +105,8 @@
   </div>
   <div class="kpi">
     <div class="kpi-label">2026 realized LTCG</div>
-    <div class="kpi-val">$7,354</div>
-    <div class="kpi-sub">~$1,103 est. federal tax</div>
+    <div class="kpi-val">$8,765</div>
+    <div class="kpi-sub">~$1,315 est. federal tax</div>
   </div>
 </div>
 
@@ -118,12 +118,12 @@
   </div>
   <div style="display:flex;justify-content:space-between;align-items:baseline;">
     <span style="font-size:22px;font-weight:600;" id="bar-mv">—</span>
-    <span style="font-size:15px;font-weight:600;color:#888;">$115,300 trigger</span>
+    <span style="font-size:15px;font-weight:600;color:#888;">$113,600 trigger</span>
   </div>
   <div class="bar-track"><div class="bar-fill" id="bar-fill" style="width:0%;"></div></div>
   <div class="bar-labels">
     <span>$0</span>
-    <span>$115,300</span>
+    <span>$113,600</span>
   </div>
   <div class="plan-grid">
     <div>
@@ -136,7 +136,7 @@
     </div>
     <div>
       <div class="plan-item-label">heloc balance</div>
-      <div class="plan-item-val">$37,800</div>
+      <div class="plan-item-val">$35,600</div>
     </div>
     <div>
       <div class="plan-item-label">april 2028</div>
@@ -205,7 +205,7 @@
 
   <div class="card" style="margin-bottom:14px;">
     <div class="card-title">stop-loss levels</div>
-    <div class="stop-row"><span>LRCX</span><span style="font-weight:600;">$370 <span style="font-weight:400;color:#888;">(10% below $411 recent high)</span></span></div>
+    <div class="stop-row"><span>LRCX</span><span style="font-weight:600;">$382 <span style="font-weight:400;color:#888;">(10% below $424 recent high)</span></span></div>
     
     <div class="stop-row"><span>META</span><span style="font-weight:600;">$525 <span style="font-weight:400;color:#888;">(add trigger)</span></span></div>
     <div class="stop-row"><span>MELI</span><span style="font-weight:600;">$1,500 <span style="font-weight:400;color:#888;">(entry trigger — $4K HELOC remaining)</span></span></div>
@@ -226,7 +226,7 @@
 </div>
 
 <p class="footer">
-  Trigger: $115,300 (current) → $121,600 after final $4K deployed.<br>
+  Trigger: $113,600 (current) → $121,600 after final $4K deployed.<br>
   Base = $72,600 ($76K implied contributions less $3,401 trim paydown) + $45K gain target.<br>
   Prices auto-loaded from Google Sheets on open. Click "Refresh prices" to update. Signal logic: ACT = stop hit or exit level reached · WATCH = within 8% of stop/trigger · NEW = position &lt;90 days · HOLD = let it run.
 </p>
@@ -242,7 +242,7 @@ const POSITIONS = [
   {sym:'COR',  name:'Cencora Inc',        sh:12.000,  cost:3184.75,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Aug 2026', note:'Q3 earnings Aug 2026 is graduation check — confirm GLP-1 stabilization.'},
   {sym:'IBIT', name:'Bitcoin ETF',        sh:161.000, cost:7492.48,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Patient hold. Bitcoin cycle recovery aligns with Apr 2028 window.'},
   {sym:'ISRG', name:'Intuitive Surgical', sh:13.000,  cost:5325.29,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Jul 2026', note:'Q2 earnings Jul 21 is graduation check — confirm da Vinci 5 cycle + bariatric stabilization.'},
-  {sym:'LRCX', name:'Lam Research Corp',  sh:26.272,  cost:1898.43,  stopRef:null,   ath:411,    trimRef:null,   exitRef:420,   addRef:null,  thesis:'trim', gradDate:null,       note:'Proactive trim at $420 (next milestone). Stop 10% below ATH ($411) = $370. Analyst targets $450-480. Both → HELOC.'},
+  {sym:'LRCX', name:'Lam Research Corp',  sh:22.272,  cost:1612.91,  stopRef:null,   ath:424.10, trimRef:null,   exitRef:450,   addRef:null,  thesis:'trim', gradDate:null,       note:'Proactive trim at $450 (matches BofA/Citi targets). Stop 10% below ATH ($424.10) = $382. Both → HELOC.'},
   {sym:'MAGS', name:'Roundhill Mag 7 ETF',sh:64.939,  cost:3034.45,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Diversified mega-cap ETF. DRIP running. Hold.'},
   {sym:'MELI', name:'MercadoLibre (watchlist)', sh:0,       cost:0,        stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:1500,  thesis:'watch',gradDate:null,       note:'Entry trigger $1,500 — deploy $4K HELOC dry powder. LatAm e-comm thesis. Q2 Aug 3.'},
   {sym:'META', name:'Meta Platforms',     sh:18.000,  cost:10681.82,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:525,   thesis:'new',  gradDate:'Jul 2026', note:'Q2 capex guidance Jul 29 is graduation check. Add trigger $525 — last $4K HELOC dry powder.'},
@@ -255,7 +255,7 @@ const POSITIONS = [
   {sym:'ZETA', name:'Zeta Global',        sh:332.000, cost:6169.08,  stopRef:null,   ath:null,   trimRef:null,   exitRef:30,    addRef:null,  thesis:'hold', gradDate:null,       note:'FULL EXIT at $30. High beta AdTech — momentum spike pattern. Proceeds → HELOC paydown + rebalance (decide at time of exit).'},
 ];
 
-const TRIGGER = 115300;
+const TRIGGER = 113600;
 const fmt  = v => '$' + Math.round(v).toLocaleString();
 const fmtS = v => (v >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(v)).toLocaleString();
 
@@ -380,7 +380,7 @@ function render(prices) {
 
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
-  document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $115,300 trigger' : 'liquidation trigger reached';
+  document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $113,600 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
   document.getElementById('kpi-gain-pct').textContent = pct + '% on $72,755 basis';
   document.getElementById('bar-fill').style.width  = (progress * 100).toFixed(1) + '%';
