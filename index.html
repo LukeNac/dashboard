@@ -281,18 +281,18 @@ function getSignal(p, price) {
 
   // ATH-based stop (LRCX: 10% below ATH)
   if (p.ath) {
-    const stopLevel = p.ath * 0.90;
+    const stopLevel = Math.floor(p.ath * 0.90);
     if (price <= stopLevel)
-      return {cls:'b-act', label:'act — stop hit ($' + Math.round(stopLevel) + ')', priority:4};
+      return {cls:'b-act', label:'act — stop hit ($' + stopLevel + ')', priority:4};
     if (price <= stopLevel * 1.05)
       return {cls:'b-watch', label:'watch — near stop', priority:3};
   }
 
   // TrimRef-based stop (VRT: 10% below last trim price)
   if (p.trimRef) {
-    const stopLevel = p.trimRef * 0.90;
+    const stopLevel = Math.floor(p.trimRef * 0.90);
     if (price <= stopLevel)
-      return {cls:'b-act', label:'act — stop hit ($' + Math.round(stopLevel) + ')', priority:4};
+      return {cls:'b-act', label:'act — stop hit ($' + stopLevel + ')', priority:4};
     if (price <= stopLevel * 1.05)
       return {cls:'b-watch', label:'watch — near stop', priority:3};
   }
