@@ -91,7 +91,7 @@
   <div class="kpi">
     <div class="kpi-label">portfolio value</div>
     <div class="kpi-val" id="kpi-mv">—</div>
-    <div class="kpi-sub">loading prices...</div>
+    <div class="kpi-sub" id="kpi-mv-sub">loading prices...</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">to trigger</div>
@@ -379,6 +379,7 @@ function render(prices) {
   const gap = Math.max(TRIGGER - totalMV, 0);
 
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
+  document.getElementById('kpi-mv-sub').textContent = 'as of ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
   document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $113,600 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
