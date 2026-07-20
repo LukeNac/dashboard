@@ -96,7 +96,7 @@
   <div class="kpi">
     <div class="kpi-label">to trigger</div>
     <div class="kpi-val" id="kpi-gap">—</div>
-    <div class="kpi-sub" id="kpi-gap-sub">trigger: $113,600</div>
+    <div class="kpi-sub" id="kpi-gap-sub">trigger: $117,600</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">unrealized gain</div>
@@ -118,12 +118,12 @@
   </div>
   <div style="display:flex;justify-content:space-between;align-items:baseline;">
     <span style="font-size:22px;font-weight:600;" id="bar-mv">—</span>
-    <span style="font-size:15px;font-weight:600;color:#888;">$113,600 trigger</span>
+    <span style="font-size:15px;font-weight:600;color:#888;">$117,600 trigger</span>
   </div>
   <div class="bar-track"><div class="bar-fill" id="bar-fill" style="width:0%;"></div></div>
   <div class="bar-labels">
     <span>$0</span>
-    <span>$113,600</span>
+    <span>$117,600</span>
   </div>
   <div class="plan-grid">
     <div>
@@ -132,7 +132,7 @@
     </div>
     <div>
       <div class="plan-item-label">dry powder</div>
-      <div class="plan-item-val">$4,000 <span style="font-size:12px;font-weight:400;color:#888;">remaining</span></div>
+      <div class="plan-item-val">$0 <span style="font-size:12px;font-weight:400;color:#888;">fully deployed</span></div>
     </div>
     <div>
       <div class="plan-item-label">heloc balance</div>
@@ -226,7 +226,7 @@
 </div>
 
 <p class="footer">
-  Trigger: $113,600 (current) → $121,600 after final $4K deployed.<br>
+  Trigger: $117,600 (current) → $121,600 after final $4K deployed.<br>
   Base = $72,600 ($76K implied contributions less $3,401 trim paydown) + $45K gain target.<br>
   Prices auto-loaded from Google Sheets on open. Click "Refresh prices" to update. Signal logic: ACT = stop hit or exit level reached · WATCH = within 8% of stop/trigger · NEW = position &lt;90 days · HOLD = let it run.
 </p>
@@ -241,11 +241,11 @@ const POSITIONS = [
   {sym:'C',    name:'Citigroup Inc',      sh:76.441,  cost:6269.90,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Financials. +62% gain. DRIP running. Hold.'},
   {sym:'COR',  name:'Cencora Inc',        sh:12.000,  cost:3184.75,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Aug 2026', note:'Q3 earnings Aug 2026 is graduation check — confirm GLP-1 stabilization.'},
   {sym:'IBIT', name:'Bitcoin ETF',        sh:161.000, cost:7492.48,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Patient hold. Bitcoin cycle recovery aligns with Apr 2028 window.'},
-  {sym:'ISRG', name:'Intuitive Surgical', sh:13.000,  cost:5325.29,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Jul 2026', note:'Q2 earnings Jul 21 is graduation check — confirm da Vinci 5 cycle + bariatric stabilization.'},
+  {sym:'ISRG', name:'Intuitive Surgical', sh:24.000,  cost:9195.86,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null, note:'Q2 earnings Jul 21 is graduation check — confirm da Vinci 5 cycle + bariatric stabilization.'},
   {sym:'LRCX', name:'Lam Research Corp',  sh:22.272,  cost:1612.91,  stopRef:null,   ath:439,    trimRef:null,   exitRef:450,   addRef:null,  thesis:'trim', gradDate:null,       note:'Proactive trim at $450 (matches BofA/Citi targets). Stop 10% below ATH ($439) = $395. Both → HELOC.'},
   {sym:'MAGS', name:'Roundhill Mag 7 ETF',sh:64.939,  cost:3034.45,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Diversified mega-cap ETF. DRIP running. Hold.'},
   {sym:'MELI', name:'MercadoLibre (watchlist)', sh:0,       cost:0,        stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:1500,  thesis:'watch',gradDate:null,       note:'Entry trigger $1,500 — deploy $4K HELOC dry powder. LatAm e-comm thesis. Q2 Aug 3.'},
-  {sym:'META', name:'Meta Platforms',     sh:18.000,  cost:10681.82,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:525,   thesis:'new',  gradDate:'Jul 2026', note:'Q2 capex guidance Jul 29 is graduation check. Add trigger $525 — last $4K HELOC dry powder.'},
+  {sym:'META', name:'Meta Platforms',     sh:18.000,  cost:10681.82,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:525,   thesis:'hold', gradDate:null, note:'Q2 capex guidance Jul 29 is graduation check. Add trigger $525 — last $4K HELOC dry powder.'},
   {sym:'MSFT', name:'Microsoft Corp',     sh:13.000,  cost:4811.50,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Mega-cap core. Hold.'},
   {sym:'NFLX', name:'Netflix Inc',        sh:44.000,  cost:3823.60,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'new',  gradDate:'Jul 2026', note:'Q2 earnings Jul 16 is graduation check — confirm buyback + ads ramp thesis.'},
   {sym:'NVDA', name:'Nvidia Corp',        sh:28.009,  cost:4036.76,  stopRef:null,   ath:null,   trimRef:null,   exitRef:null,  addRef:null,  thesis:'hold', gradDate:null,       note:'Core AI thesis. DRIP running. Hold.'},
@@ -255,7 +255,7 @@ const POSITIONS = [
   {sym:'ZETA', name:'Zeta Global',        sh:332.000, cost:6169.08,  stopRef:null,   ath:null,   trimRef:null,   exitRef:30,    addRef:null,  thesis:'hold', gradDate:null,       note:'FULL EXIT at $30. High beta AdTech — momentum spike pattern. Proceeds → HELOC paydown + rebalance (decide at time of exit).'},
 ];
 
-const TRIGGER = 113600;
+const TRIGGER = 117600;
 const fmt  = v => '$' + Math.round(v).toLocaleString();
 const fmtS = v => (v >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(v)).toLocaleString();
 
@@ -381,7 +381,7 @@ function render(prices) {
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
   document.getElementById('kpi-mv-sub').textContent = 'as of ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
-  document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $113,600 trigger' : 'liquidation trigger reached';
+  document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $117,600 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
   document.getElementById('kpi-gain-pct').textContent = pct + '% on $72,755 basis';
   document.getElementById('bar-fill').style.width  = (progress * 100).toFixed(1) + '%';
