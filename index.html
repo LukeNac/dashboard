@@ -99,6 +99,11 @@
     <div class="kpi-sub" id="kpi-gap-sub">trigger: $117,600</div>
   </div>
   <div class="kpi">
+    <div class="kpi-label">return needed</div>
+    <div class="kpi-val" id="kpi-return-pct">—</div>
+    <div class="kpi-sub" id="kpi-return-sub">to hit trigger</div>
+  </div>
+  <div class="kpi">
     <div class="kpi-label">unrealized gain</div>
     <div class="kpi-val" id="kpi-gain">—</div>
     <div class="kpi-sub" id="kpi-gain-pct">on $72,755 basis</div>
@@ -381,6 +386,10 @@ function render(prices) {
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
   document.getElementById('kpi-mv-sub').textContent = 'as of ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
+  const returnNeeded = totalMV > 0 ? ((TRIGGER - totalMV) / totalMV * 100) : 0;
+  const annualizedReturn = totalMV > 0 ? (Math.pow(TRIGGER / totalMV, 12/20) - 1) * 100 : 0;
+  document.getElementById('kpi-return-pct').textContent = totalMV > 0 ? (returnNeeded >= 0 ? '+' : '') + returnNeeded.toFixed(1) + '%' : '—';
+  document.getElementById('kpi-return-sub').textContent = totalMV > 0 ? annualizedReturn.toFixed(1) + '% annualized (20mo)' : 'to hit trigger';
   document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $117,600 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
   document.getElementById('kpi-gain-pct').textContent = pct + '% on $72,755 basis';
