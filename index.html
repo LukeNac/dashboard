@@ -113,6 +113,21 @@
     <div class="kpi-val">$12,556</div>
     <div class="kpi-sub">~$1,883 est. federal tax</div>
   </div>
+  <div class="kpi">
+    <div class="kpi-label">money-weighted return</div>
+    <div class="kpi-val" id="kpi-xirr">—</div>
+    <div class="kpi-sub" id="kpi-xirr-sub">XIRR since inception</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">vs. S&amp;P 500 (VOO)</div>
+    <div class="kpi-val" id="kpi-voo-xirr">—</div>
+    <div class="kpi-sub" id="kpi-voo-sub">same cash flows, VOO instead</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">vs. Nasdaq 100 (QQQ)</div>
+    <div class="kpi-val" id="kpi-qqq-xirr">—</div>
+    <div class="kpi-sub" id="kpi-qqq-sub">same cash flows, QQQ instead</div>
+  </div>
 </div>
 
 <div class="card">
@@ -255,6 +270,85 @@ const POSITIONS = [
 ];
 
 const TRIGGER = 113000;
+
+// Confirmed cash flows since account inception (from Vanguard transaction history).
+// Negative = contributed to account. Positive = withdrawn from account (to HELOC).
+// Add new rows here whenever a contribution or HELOC withdrawal is confirmed.
+const CASH_FLOWS = [
+  { date: '2025-01-07', amount: -100.00 },
+  { date: '2025-01-21', amount: -19900.00 },
+  { date: '2025-04-08', amount: -15000.00 },
+  { date: '2026-01-07', amount: -5000.00 },
+  { date: '2026-02-12', amount: -5000.00 },
+  { date: '2026-04-01', amount: -10000.00 },
+  { date: '2026-05-15', amount: -7456.49 },
+  { date: '2026-05-21', amount: 3400.84 },
+  { date: '2026-06-03', amount: -6000.00 },
+  { date: '2026-06-11', amount: -3033.10 },
+  { date: '2026-06-17', amount: 2329.66 },
+  { date: '2026-07-01', amount: 1696.61 },
+  { date: '2026-07-21', amount: -4000.00 },
+  { date: '2026-08-28', amount: 4664.29 }, // pending HELOC transfer (ZETA/ISRG/META remainder)
+];
+
+// VOO and QQQ closing prices on each cash flow date (same dates as CASH_FLOWS above).
+// Used to build "shadow portfolios" - what the same dollars would be worth if
+// deployed into the S&P 500 (VOO) or Nasdaq 100 (QQQ) instead of your actual picks.
+const BENCHMARK_PRICES = {
+  VOO: {
+    '2025-01-07': 541.41, '2025-01-21': 554.46, '2025-04-08': 456.74,
+    '2026-01-07': 634.17, '2026-02-12': 626.49, '2026-04-01': 602.30,
+    '2026-05-15': 679.44, '2026-05-21': 682.84, '2026-06-03': 693.36,
+    '2026-06-11': 678.23, '2026-06-17': 681.41, '2026-07-01': 685.46,
+    '2026-07-21': 687.87,
+  },
+  QQQ: {
+    '2025-01-07': 515.18, '2025-01-21': 524.80, '2025-04-08': 416.06,
+    '2026-01-07': 624.02, '2026-02-12': 600.64, '2026-04-01': 584.31,
+    '2026-05-15': 708.93, '2026-05-21': 714.51, '2026-06-03': 744.21,
+    '2026-06-11': 717.12, '2026-06-17': 722.51, '2026-07-01': 725.17,
+    '2026-07-21': 708.97,
+  }
+};
+
+function buildShadowXIRR(ticker, todayPrice) {
+  const prices = BENCHMARK_PRICES[ticker];
+  let units = 0;
+  CASH_FLOWS.forEach(cf => {
+    // Skip the pending 8/28 flow if todayStr hasn't reached it yet - keep simple, include always
+    const price = prices[cf.date];
+    if (price) units += -cf.amount / price;
+  });
+  const shadowValue = units * todayPrice;
+  const todayStr = new Date().toISOString().slice(0,10);
+  const flows = CASH_FLOWS
+    .filter(cf => prices[cf.date])  // only dates we have benchmark prices for
+    .map(cf => ({ date: cf.date, amount: cf.amount }))
+    .concat([{ date: todayStr, amount: shadowValue }]);
+  return { irr: xirr(flows), value: shadowValue };
+}
+
+function xirr(flows) {
+  const t0 = new Date(flows[0].date).getTime();
+  const dayMs = 1000 * 60 * 60 * 24;
+  function xnpv(rate) {
+    return flows.reduce((sum, cf) => {
+      const days = (new Date(cf.date).getTime() - t0) / dayMs;
+      return sum + cf.amount / Math.pow(1 + rate, days / 365);
+    }, 0);
+  }
+  let lo = -0.99, hi = 10;
+  let flo = xnpv(lo), fhi = xnpv(hi);
+  if (flo * fhi > 0) return null;
+  let mid = 0;
+  for (let i = 0; i < 100; i++) {
+    mid = (lo + hi) / 2;
+    const fmid = xnpv(mid);
+    if (Math.abs(fmid) < 0.5) return mid;
+    if ((flo < 0) === (fmid < 0)) { lo = mid; flo = fmid; } else { hi = mid; }
+  }
+  return mid;
+}
 const fmt  = v => '$' + Math.round(v).toLocaleString();
 const fmtS = v => (v >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(v)).toLocaleString();
 
@@ -378,6 +472,30 @@ function render(prices) {
   const gap = Math.max(TRIGGER - totalMV, 0);
 
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
+
+  // XIRR: confirmed cash flows + today's live portfolio value as final flow
+  const todayStr = new Date().toISOString().slice(0,10);
+  const flowsWithToday = [...CASH_FLOWS, { date: todayStr, amount: totalMV }];
+  const irr = xirr(flowsWithToday);
+  if (irr !== null) {
+    document.getElementById('kpi-xirr').textContent = (irr*100 >= 0 ? '+' : '') + (irr*100).toFixed(1) + '%';
+    const years = ((new Date(todayStr) - new Date(CASH_FLOWS[0].date)) / (1000*60*60*24*365.25)).toFixed(1);
+    document.getElementById('kpi-xirr-sub').textContent = 'XIRR over ' + years + ' yrs since inception';
+  }
+
+  // Benchmark comparisons - VOO and QQQ prices read live from the Prices sheet
+  if (prices['VOO']) {
+    const vooResult = buildShadowXIRR('VOO', prices['VOO']);
+    document.getElementById('kpi-voo-xirr').textContent = (vooResult.irr*100).toFixed(1) + '%';
+    const diff = irr !== null ? ((irr - vooResult.irr)*100) : null;
+    document.getElementById('kpi-voo-sub').textContent = diff !== null ? (diff >= 0 ? '+' : '') + diff.toFixed(1) + ' pts vs your XIRR' : 'same cash flows, VOO instead';
+  }
+  if (prices['QQQ']) {
+    const qqqResult = buildShadowXIRR('QQQ', prices['QQQ']);
+    document.getElementById('kpi-qqq-xirr').textContent = (qqqResult.irr*100).toFixed(1) + '%';
+    const diff2 = irr !== null ? ((irr - qqqResult.irr)*100) : null;
+    document.getElementById('kpi-qqq-sub').textContent = diff2 !== null ? (diff2 >= 0 ? '+' : '') + diff2.toFixed(1) + ' pts vs your XIRR' : 'same cash flows, QQQ instead';
+  }
   document.getElementById('kpi-mv-sub').textContent = 'as of ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
   const returnNeeded = totalMV > 0 ? ((TRIGGER - totalMV) / totalMV * 100) : 0;
