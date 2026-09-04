@@ -106,7 +106,7 @@
   <div class="kpi">
     <div class="kpi-label">unrealized gain</div>
     <div class="kpi-val" id="kpi-gain">—</div>
-    <div class="kpi-sub" id="kpi-gain-pct">on $72,755 basis</div>
+    <div class="kpi-sub" id="kpi-gain-pct">on basis</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">2026 realized LTCG</div>
@@ -180,7 +180,7 @@
         <th>ticker</th>
         <th class="r">price</th>
         <th class="r">value</th>
-        <th class="r">g/l</th>
+        <th class="r">g/l ($ / %)</th>
         <th class="r">signal</th>
       </tr>
     </thead>
@@ -417,17 +417,23 @@ function parseCSV(text) {
 
 function render(prices) {
   let totalMV = 0;
-  const totalCost = 72755;
+  let totalCost = 0; // computed dynamically below from held positions' cost basis
   const actions = [];
   const tbody = document.getElementById('pos-body');
   tbody.innerHTML = '';
 
   const sorted = POSITIONS.map(p => ({...p, price: prices[p.sym]||0, mv: Math.round((prices[p.sym]||0)*p.sh)})).sort((a,b)=>b.mv-a.mv);
-  sorted.forEach(p => {
+  const heldPositions = sorted.filter(p => p.sh > 0);
+  const watchlistPositions = sorted.filter(p => p.sh === 0);
+  let sumGl = 0;
+
+  function renderRow(p) {
     const price = p.price;
     const mv = p.mv;
     const gl = mv - Math.round(p.cost);
+    const glPct = p.cost > 0 ? (gl / p.cost * 100) : 0;
     totalMV += mv;
+    if (p.sh > 0) { totalCost += Math.round(p.cost); sumGl += gl; }
 
     const sig = price > 0 ? getSignal(p, price) : {cls:'b-hold', label:'hold', priority:1};
 
@@ -436,7 +442,7 @@ function render(prices) {
       <td><div class="pos-sym">${p.sym}</div><div class="pos-name">${p.name}</div></td>
       <td class="r">${price > 0 ? fmt(price) : '—'}</td>
       <td class="r">${price > 0 ? fmt(mv) : '—'}</td>
-      <td class="r ${gl >= 0 ? 'green' : 'red'}">${price > 0 ? fmtS(gl) : '—'}</td>
+      <td class="r ${gl >= 0 ? 'green' : 'red'}">${price > 0 ? fmtS(gl) + ' <span style="font-size:11px;opacity:0.75;">(' + (glPct >= 0 ? '+' : '') + glPct.toFixed(1) + '%)</span>' : '—'}</td>
       <td class="r"><span class="badge ${sig.cls}">${sig.label}</span></td>
     `;
     tbody.appendChild(tr);
@@ -465,7 +471,24 @@ function render(prices) {
         msg = `${p.sym} at ${fmt(price)} — watch zone. ${p.note}`;
       actions.push({sym: p.sym, msg, priority: sig.priority});
     }
-  });
+  }
+
+  heldPositions.forEach(renderRow);
+
+  // Totals row - sits after all actual holdings, before watchlist placeholders (0 shares)
+  const sumGlPct = totalCost > 0 ? (sumGl / totalCost * 100) : 0;
+  const totalsTr = document.createElement('tr');
+  totalsTr.style.borderTop = '2px solid #333';
+  totalsTr.innerHTML = `
+    <td style="font-weight:700;">TOTAL</td>
+    <td class="r"></td>
+    <td class="r" style="font-weight:700;">${fmt(totalMV)}</td>
+    <td class="r ${sumGl >= 0 ? 'green' : 'red'}" style="font-weight:700;">${fmtS(sumGl)} <span style="font-size:11px;opacity:0.75;">(${sumGlPct >= 0 ? '+' : ''}${sumGlPct.toFixed(1)}%)</span></td>
+    <td class="r"></td>
+  `;
+  tbody.appendChild(totalsTr);
+
+  watchlistPositions.forEach(renderRow);
 
   const gain = totalMV - totalCost;
   const pct  = (gain / totalCost * 100).toFixed(1);
@@ -505,7 +528,7 @@ function render(prices) {
   document.getElementById('kpi-return-sub').textContent = totalMV > 0 ? annualizedReturn.toFixed(1) + '% annualized (20mo)' : 'to hit trigger';
   document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $113,000 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
-  document.getElementById('kpi-gain-pct').textContent = pct + '% on $72,755 basis';
+  document.getElementById('kpi-gain-pct').textContent = pct + '% on ' + fmt(totalCost) + ' basis';
   document.getElementById('bar-fill').style.width  = (progress * 100).toFixed(1) + '%';
   document.getElementById('bar-fill').style.background = progress >= 1 ? '#2da44e' : '#1a56db';
   document.getElementById('bar-pct').textContent   = (progress * 100).toFixed(1) + '% of trigger';
