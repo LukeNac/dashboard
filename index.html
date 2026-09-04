@@ -110,8 +110,8 @@
   </div>
   <div class="kpi">
     <div class="kpi-label">2026 realized LTCG</div>
-    <div class="kpi-val">$12,556</div>
-    <div class="kpi-sub">~$1,883 est. federal tax</div>
+    <div class="kpi-val" id="kpi-ltcg">—</div>
+    <div class="kpi-sub" id="kpi-ltcg-sub">est. federal tax</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">money-weighted return</div>
@@ -163,6 +163,51 @@
       <div class="plan-item-val" id="months-left">— months</div>
     </div>
   </div>
+</div>
+
+<div class="card" style="margin-bottom:1.25rem;">
+  <div class="card-title">gain progress — to trigger</div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;">
+    <span style="font-size:13px;color:#666;">realized + unrealized gain</span>
+    <span style="font-size:14px;font-weight:600;" id="gain-pct-label">—</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;">
+    <span style="font-size:22px;font-weight:600;" id="gain-total">—</span>
+    <span style="font-size:15px;font-weight:600;color:#888;" id="gain-at-trigger-label">— at trigger</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill" id="gain-bar-fill" style="width:0%;background:#7c5cff;"></div></div>
+  <div class="plan-grid" style="grid-template-columns:repeat(2,1fr);">
+    <div>
+      <div class="plan-item-label">realized (locked in)</div>
+      <div class="plan-item-val" id="gain-realized">—</div>
+    </div>
+    <div>
+      <div class="plan-item-label">unrealized (current)</div>
+      <div class="plan-item-val" id="gain-unrealized">—</div>
+    </div>
+  </div>
+  <div style="margin-top:10px; padding-top:10px; border-top:1px solid #f0f0f0;">
+    <div class="plan-item-label">total taken off the table (→ HELOC, all-time)</div>
+    <div class="plan-item-val" id="gain-total-extracted" style="font-size:16px;">—</div>
+  </div>
+  <div class="plan-grid" style="grid-template-columns:repeat(2,1fr); margin-top:8px;">
+    <div>
+      <div class="plan-item-label" style="font-size:10.5px;">↳ your capital returning</div>
+      <div class="plan-item-val" id="gain-principal-returned" style="font-size:13px; font-weight:500;">—</div>
+    </div>
+    <div>
+      <div class="plan-item-label" style="font-size:10.5px;">↳ new profit banked</div>
+      <div class="plan-item-val" id="gain-protected" style="font-size:13px; font-weight:500;">—</div>
+    </div>
+  </div>
+  <p style="font-size:10.5px;color:#aaa;margin-top:6px;line-height:1.4;">
+    The rest of this year's $12,556 in realized gain (~$9,143) got reinvested into other
+    positions rather than sent to HELOC — it's still at risk, just under different tickers now.
+  </p>
+  <p style="font-size:11px;color:#aaa;margin-top:10px;line-height:1.5;">
+    "At trigger" is what this figure will read the moment the portfolio hits $113,000 —
+    it moves with your cost basis, so 100% here always lines up with the trigger being hit.
+  </p>
 </div>
 
 <div class="card attn-card" id="attn-card">
@@ -271,6 +316,15 @@ const POSITIONS = [
 ];
 
 const TRIGGER = 113000;
+
+// Realized gains locked in this year (trims + sales), and the compounding
+// base used for the trigger (implied contributions minus $ extracted to HELOC).
+// Update REALIZED_GAIN_YTD after every trim/sale. Update COMPOUNDING_BASE
+// whenever a new HELOC extraction or contribution changes it (see trigger math).
+const REALIZED_GAIN_YTD = 12556;
+const REALIZED_TAX_EST = 1883;
+const COMPOUNDING_BASE = 67908.60; // $80,000 implied contributions - $12,091.40 extracted to HELOC
+const TOTAL_EXTRACTED_TO_HELOC = 12091.40; // full cash sent to HELOC via trim proceeds (principal + gain combined)
 
 // Confirmed cash flows since account inception (from Vanguard transaction history).
 // Negative = contributed to account. Positive = withdrawn from account (to HELOC).
@@ -496,6 +550,33 @@ function render(prices) {
   const gap = Math.max(TRIGGER - totalMV, 0);
 
   document.getElementById('kpi-mv').textContent    = fmt(totalMV);
+
+  // Realized LTCG KPI (from tracked constant)
+  document.getElementById('kpi-ltcg').textContent = fmt(REALIZED_GAIN_YTD);
+  document.getElementById('kpi-ltcg-sub').textContent = '~' + fmt(REALIZED_TAX_EST) + ' est. federal tax';
+
+  // Gain Progress card: realized + unrealized vs live "gain at trigger" reference.
+  // This denominator moves with cost basis, so 100% always lines up exactly with
+  // the portfolio hitting TRIGGER - no static-target mismatch to explain.
+  const unrealizedGain = totalMV - totalCost;
+  const gainTotal = REALIZED_GAIN_YTD + unrealizedGain;
+  const gainAtTrigger = (TRIGGER - totalCost) + REALIZED_GAIN_YTD;
+  const gainProgress = gainAtTrigger > 0 ? Math.min(Math.max(gainTotal / gainAtTrigger, 0), 1) : 0;
+  document.getElementById('gain-realized').textContent = fmt(REALIZED_GAIN_YTD);
+  document.getElementById('gain-unrealized').textContent = fmtS(unrealizedGain);
+  document.getElementById('gain-total').textContent = fmtS(gainTotal);
+  document.getElementById('gain-pct-label').textContent = (gainTotal/gainAtTrigger*100).toFixed(1) + '%';
+  document.getElementById('gain-at-trigger-label').textContent = fmt(gainAtTrigger) + ' at trigger';
+  document.getElementById('gain-bar-fill').style.width = (gainProgress * 100).toFixed(1) + '%';
+
+  // Total capital taken off the table (all-time extraction to HELOC), split into
+  // principal returning vs new profit banked
+  const redeployedGain = totalCost - COMPOUNDING_BASE;  // gain reinvested elsewhere, still at risk
+  const protectedGain = REALIZED_GAIN_YTD - redeployedGain;  // profit portion of what was extracted
+  const principalReturned = TOTAL_EXTRACTED_TO_HELOC - protectedGain;
+  document.getElementById('gain-total-extracted').textContent = fmt(TOTAL_EXTRACTED_TO_HELOC);
+  document.getElementById('gain-principal-returned').textContent = fmt(principalReturned);
+  document.getElementById('gain-protected').textContent = fmt(protectedGain);
 
   // XIRR: confirmed cash flows + today's live portfolio value as final flow
   const todayStr = new Date().toISOString().slice(0,10);
