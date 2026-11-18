@@ -156,7 +156,7 @@
     </div>
     <div>
       <div class="plan-item-label">heloc balance</div>
-      <div class="plan-item-val">$32,350</div>
+      <div class="plan-item-val">$11,300</div>
     </div>
     <div>
       <div class="plan-item-label">april 2028</div>
@@ -402,9 +402,9 @@ function xirr(flows) {
 const fmt  = v => '$' + Math.round(v).toLocaleString();
 const fmtS = v => (v >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(v)).toLocaleString();
 
-function monthsTo(y, m) {
+function monthsTo(y, m, d = 1) {
   const now = new Date();
-  const target = new Date(y, m - 1, 1);
+  const target = new Date(y, m - 1, d);
   return Math.max(0, Math.round((target - now) / (1000 * 60 * 60 * 24 * 30.4)));
 }
 
@@ -599,9 +599,10 @@ function render(prices) {
   document.getElementById('kpi-mv-sub').textContent = 'as of ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('kpi-gap').textContent   = gap > 0 ? fmt(gap) : 'triggered!';
   const returnNeeded = totalMV > 0 ? ((TRIGGER - totalMV) / totalMV * 100) : 0;
-  const annualizedReturn = totalMV > 0 ? (Math.pow(TRIGGER / totalMV, 12/20) - 1) * 100 : 0;
+  const monthsLeft = Math.max(1, monthsTo(2028, 4, 15)); // mid-April 2028 liquidation; 17 months as of Nov 18, 2026
+  const annualizedReturn = totalMV > 0 ? (Math.pow(TRIGGER / totalMV, 12/monthsLeft) - 1) * 100 : 0;
   document.getElementById('kpi-return-pct').textContent = totalMV > 0 ? (returnNeeded >= 0 ? '+' : '') + returnNeeded.toFixed(1) + '%' : '—';
-  document.getElementById('kpi-return-sub').textContent = totalMV > 0 ? annualizedReturn.toFixed(1) + '% annualized (20mo)' : 'to hit trigger';
+  document.getElementById('kpi-return-sub').textContent = totalMV > 0 ? annualizedReturn.toFixed(1) + '% annualized (' + monthsLeft + 'mo)' : 'to hit trigger';
   document.getElementById('kpi-gap-sub').textContent = gap > 0 ? 'to $113,000 trigger' : 'liquidation trigger reached';
   document.getElementById('kpi-gain').textContent  = fmtS(gain);
   document.getElementById('kpi-gain-pct').textContent = pct + '% on ' + fmt(totalCost) + ' basis';
@@ -609,7 +610,7 @@ function render(prices) {
   document.getElementById('bar-fill').style.background = progress >= 1 ? '#2da44e' : '#1a56db';
   document.getElementById('bar-pct').textContent   = (progress * 100).toFixed(1) + '% of trigger';
   document.getElementById('bar-mv').textContent    = fmt(totalMV);
-  document.getElementById('months-left').textContent = monthsTo(2028, 4) + ' months';
+  document.getElementById('months-left').textContent = monthsLeft + ' months';
 
   const attnCard  = document.getElementById('attn-card');
   const attnTitle = document.getElementById('attn-title');
